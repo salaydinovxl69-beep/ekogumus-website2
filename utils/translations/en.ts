@@ -322,7 +322,7 @@ export const en = {
     },
     liquidFertilizers: {
       main: "NOVELTY",
-      title: 'Liquid Concentrated Fertilizers',
+      title: 'NANOECOVERM liquid concentrated fertilizers',
       subtitle: 'PRODUCTION NOVELTIES - High-concentration fast-acting liquid organic fertilizers',
       buyButton: 'Buy',
       moreButton: 'More',
@@ -359,7 +359,7 @@ export const en = {
       ],
     },
     productCards: {
-      title: 'Fine-granulated Fertilizers',
+      title: 'BIOGUMUS fine-granulated fertilizers',
       subtitle: 'Classic organic-mineral fertilizers in fine granules for various needs',
       buyButton: 'Buy',
       moreButton: 'More',
@@ -550,6 +550,7 @@ export const en = {
     sendEmail: 'Send email',
     youtube: 'YouTube channel',
     telegram: 'Telegram',
+    linkedin: "LinkedIn",
   },
 
   // Contacts Page

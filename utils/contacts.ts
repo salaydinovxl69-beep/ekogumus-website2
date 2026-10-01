@@ -7,6 +7,7 @@ export const EMAIL = "bashfergana@mail.ru";
 export const TELEGRAM = "@BahodirBX";
 export const TELEGRAM_URL = "https://t.me/BahodirBX";
 export const YOUTUBE_URL = "https://www.youtube.com/@biogumusfargonaekogumus8419";
+export const LINKEDIN_URL = "https://www.linkedin.com/in/bahadir-solijonov-734686338";
 
 /* Координаты для карты (Фергана, ул. Бабура, 38). Виджет показывает только
    пин по точке, без панели результатов поиска. При переезде поменяйте

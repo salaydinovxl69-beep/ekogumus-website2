@@ -22,6 +22,7 @@ export const ICON_PATHS: Record<string, string> = {
   mail: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/>',
   telegram: '<path d="M21 5L3 12l5 2 2 5 3-4 5 3z"/><path d="M8 14l9-7-6 8"/>',
   youtube: '<rect x="3" y="6" width="18" height="12" rx="3.5"/><path d="M10 9.5l5 2.5-5 2.5z"/>',
+  linkedin: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10.5V17M8 7.5v.01M12 17v-6.5M12 13.5c0-1.7 1-3 2.5-3s2.5 1 2.5 3V17"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   arrowUp: '<path d="M12 19V5M6 11l6-6 6 6"/>',
   chevL: '<path d="M15 6l-6 6 6 6"/>',

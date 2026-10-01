@@ -342,7 +342,7 @@ export const uz = {
     },
     liquidFertilizers: {
       main: 'YANGILIK',
-      title: 'Suyuq konsentrlangan o\'g\'itlar',
+      title: 'NANOECOVERM suyuq konsentrlangan o\'g\'it',
       subtitle: 'ISHLAB CHIQARISH YANGILIKLARI - Tez ta\'sir ko\'rsatadigan yuqori konsentrlangan suyuq organik o\'g\'itlar',
       buyButton: 'Sotib olish',
       moreButton: 'Batafsil',
@@ -379,7 +379,7 @@ export const uz = {
       ],
     },
     productCards: {
-      title: 'Mayda granulali o\'g\'itlar',
+      title: 'BIOGUMUS mayda granulali o\'g\'it',
       subtitle: 'Turli ehtiyojlar uchun mayda granulalarda klassik organik-mineral o\'g\'itlar',
       buyButton: 'Sotib olish',
       moreButton: 'Batafsil',
@@ -570,6 +570,7 @@ export const uz = {
     sendEmail: 'Email yozish',
     youtube: 'YouTube kanal',
     telegram: 'Telegram',
+    linkedin: "LinkedIn",
   },
 
   // Contacts Page

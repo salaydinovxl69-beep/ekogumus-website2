@@ -575,6 +575,7 @@ export const ru = {
     sendEmail: "Написать email",
     youtube: "YouTube канал",
     telegram: "Telegram",
+    linkedin: "Страница в LinkedIn",
   },
 
   // Contacts Page

@@ -4,7 +4,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { Icon } from "./eko/Icon";
 import { BrandLogo } from "./eko/BrandLogo";
 
-import { PHONE, PHONE_RAW, EMAIL, TELEGRAM_URL, YOUTUBE_URL } from "../utils/contacts";
+import { PHONE, PHONE_RAW, EMAIL, TELEGRAM_URL, YOUTUBE_URL, LINKEDIN_URL } from "../utils/contacts";
 import { NAV_ROUTES } from "../utils/nav";
 
 export function Footer() {
@@ -78,6 +78,9 @@ export function Footer() {
               </a>
               <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label={t.a11y.telegram}>
                 <Icon name="telegram" size={18} />
+              </a>
+              <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" aria-label={t.a11y.linkedin}>
+                <Icon name="linkedin" size={18} />
               </a>
               <a href={`mailto:${EMAIL}`} aria-label={t.a11y.sendEmail}>
                 <Icon name="mail" size={18} />

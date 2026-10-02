@@ -1,0 +1,10 @@
+{
+  // Static site deployed as a Cloudflare Worker with static assets.
+  // Unknown paths fall back to index.html for react-router (SPA).
+  "name": "ekogumus-website2",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

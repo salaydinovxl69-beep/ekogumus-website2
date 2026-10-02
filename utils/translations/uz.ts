@@ -957,6 +957,7 @@ export const uz = {
     buildRoute: "Marshrut tuzish",
     fromLabel: "dan",
     currency: "so'm",
+    priceNote: "Narx O'zbekistondagi xaridorlar uchun. Eksport narxlari alohida kelishiladi.",
     weightUnit: "kg",
     volumeUnit: "l",
     checkout: "Buyurtma berish",

@@ -461,6 +461,7 @@ export function ProductPage() {
                           <Icon name="cart" size={15} /> {e.buy}
                         </button>
                       </div>
+                      <p className="pcard__note">{e.priceNote}</p>
                     </div>
                   </div>
                 ))}
@@ -521,6 +522,7 @@ export function ProductPage() {
                           <Icon name="cart" size={15} /> {e.buy}
                         </button>
                       </div>
+                      <p className="pcard__note">{e.priceNote}</p>
                     </div>
                   </div>
                 ))}

@@ -1002,6 +1002,7 @@ export const ru = {
     buildRoute: "Построить маршрут",
     fromLabel: "от",
     currency: "сум",
+    priceNote: "Цена для покупателей в Узбекистане. Экспортные цены обсуждаются отдельно.",
     weightUnit: "кг",
     volumeUnit: "л",
     checkout: "Оформление заказа",

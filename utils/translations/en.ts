@@ -956,6 +956,7 @@ export const en = {
     buildRoute: "Get directions",
     fromLabel: "from",
     currency: "UZS",
+    priceNote: "Price for buyers in Uzbekistan. Export prices are negotiated separately.",
     weightUnit: "kg",
     volumeUnit: "L",
     checkout: "Checkout",

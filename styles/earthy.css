@@ -315,6 +315,9 @@ h1, h2, h3, h4, h5 {
   box-shadow: 0 4px 24px rgba(42,38,32,.05);
 }
 .hdr__inner { display: flex; align-items: center; gap: 28px; height: 78px; }
+/* Шапке нужно больше места, чем контейнеру страницы (1200px): бренд, 6 пунктов
+   меню, тема, телефон, языки и «Купить» в 1200px не помещаются */
+.eko .container.hdr__inner { max-width: 1400px; }
 
 /* flex: none — бренд не сжимается, иначе «EKOGUMUS» вылезает на пункты меню */
 .brand { display: inline-flex; align-items: center; gap: 11px; flex: none; }
@@ -621,18 +624,26 @@ a.ftr__row:hover { color: var(--cream); }
    ============================================================ */
 /* Промежуточная ширина: nav ещё показан, но контейнер уже ~1025px —
    ужимаем шапку, чтобы все 6 пунктов меню помещались рядом с брендом */
-@media (max-width: 1280px) {
+/* 1281–1440px (MacBook 13 и т.п.): иконки ещё видны, ужимаем отступы,
+   иначе кнопка «Купить» вылезает за правый край */
+@media (max-width: 1440px) {
   .hdr__inner { gap: 18px; }
   .hdr__nav { gap: 16px; margin-left: 0; }
+  .hdr__right { gap: 10px; }
+}
+@media (max-width: 1280px) {
+  .hdr__inner { gap: 14px; }
+  .hdr__nav { gap: 13px; margin-left: 0; }
   .brand { gap: 9px; }
   .brand__mark { --brand-logo: 46px; }
   .brand__name { font-size: 20px; }
   .hdr__icon { display: none; }
 }
-@media (max-width: 1080px) {
+@media (max-width: 1100px) {
   .hdr__nav { display: none; }
   .hdr__burger { display: grid; place-items: center; }
-  .hdr__cta { display: none; }
+  /* .eko — иначе .eko .btn { display: inline-flex } перебивает и кнопка выталкивает бургер за экран */
+  .eko .hdr__cta { display: none; }
   .langsw { display: none; }
 }
 @media (max-width: 920px) {

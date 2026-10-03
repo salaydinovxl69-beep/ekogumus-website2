@@ -307,7 +307,9 @@
 }
 @media (max-width: 920px) {
   .phero__inner, .comp__grid, .achieve__grid, .form-sec__grid, .map-sec { grid-template-columns: 1fr; }
-  .phero__media, .achieve__media { max-width: 460px; margin-left: auto; margin-right: auto; }
+  /* width: 100% — с auto-отступами grid-элемент сжимается по содержимому (0px,
+     пока фото не загрузилось), и потом блок вырастает и сдвигает страницу (CLS) */
+  .phero__media, .achieve__media { width: 100%; max-width: 460px; margin-left: auto; margin-right: auto; }
   .pcards, .pcards--3 { grid-template-columns: repeat(2, 1fr); }
   .coop__conds, .process__grid, .vals, .adv, .ccards, .people { grid-template-columns: repeat(2, 1fr); }
   .usage__grid, .timeline__rail { grid-template-columns: 1fr; }

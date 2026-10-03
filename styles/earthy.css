@@ -648,12 +648,12 @@ a.ftr__row:hover { color: var(--cream); }
 }
 @media (max-width: 920px) {
   .hero__inner { grid-template-columns: 1fr; }
-  .hero__media { max-width: 460px; order: -1; margin-left: auto; margin-right: auto; }
+  .hero__media { width: 100%; max-width: 460px; order: -1; margin-left: auto; margin-right: auto; }
   /* Исходник 2496×1664 (ландшафт) — в одну колонку не режем его в портрет */
   .hero__photo, .hero__photo.ph { aspect-ratio: 4/3; }
   .eko .hero__stats { grid-template-columns: repeat(2, 1fr); gap: 28px 20px; margin-top: clamp(56px, 8vw, 90px); }
   .about-prev__grid, .cert__grid { grid-template-columns: 1fr; }
-  .about-prev__media, .cert__media { max-width: 440px; margin-left: auto; margin-right: auto; }
+  .about-prev__media, .cert__media { width: 100%; max-width: 440px; margin-left: auto; margin-right: auto; }
   .psplit, .benefits__grid, .statsband__grid { grid-template-columns: 1fr 1fr; }
   .about-prev__since { right: 14px; }
 }

@@ -1,7 +1,10 @@
 import React from 'react';
 declare module '*.css';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import { loadTranslation } from './contexts/LanguageContext';
+import { langFromPath } from './utils/routing';
 import './styles/globals.css';
 // «Земля и Зерно» earthy redesign — loaded after globals so its (unlayered)
 // rules win over the legacy liquid-glass base styles.
@@ -22,8 +25,20 @@ import '@fontsource-variable/jetbrains-mono'; // 400–500
 // Open Sans 400 — используется тостами (класс font-opensans на Toaster).
 import '@fontsource/open-sans/400.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+/* Язык — из адреса. Словарь грузим до первого рендера, чтобы он совпал
+   с пререндеренным HTML: тогда React «оживляет» готовую разметку (hydrate),
+   а не перерисовывает страницу. Без пререндера (vite dev) — обычный рендер. */
+const rootEl = document.getElementById('root')!;
+const lang = langFromPath(window.location.pathname);
+
+loadTranslation(lang).then((dict) => {
+  const app = (
+    <React.StrictMode>
+      <BrowserRouter>
+        <App initialDicts={{ [lang]: dict }} />
+      </BrowserRouter>
+    </React.StrictMode>
+  );
+  if (rootEl.firstElementChild) ReactDOM.hydrateRoot(rootEl, app);
+  else ReactDOM.createRoot(rootEl).render(app);
+});

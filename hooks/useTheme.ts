@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type Theme = "light" | "dark";
 
@@ -13,7 +13,10 @@ function readTheme(): Theme {
 }
 
 export function useTheme(): [Theme, () => void] {
-  const [theme, setTheme] = useState<Theme>(readTheme);
+  /* "light" на первом рендере — как в пререндеренном HTML (гидратация без
+     расхождений); реальную тему из data-theme подхватываем сразу после */
+  const [theme, setTheme] = useState<Theme>("light");
+  useEffect(() => setTheme(readTheme()), []);
 
   const toggle = () => {
     const next: Theme = readTheme() === "dark" ? "light" : "dark";

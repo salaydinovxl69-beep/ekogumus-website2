@@ -11,6 +11,7 @@ import type { Language } from "../utils/i18n";
 
 import { PHONE, PHONE_RAW, EMAIL } from "../utils/contacts";
 import { NAV_ROUTES } from "../utils/nav";
+import { stripLang } from "../utils/routing";
 
 const LANGS: { code: Language; label: string; name: string }[] = [
   { code: "ru", label: "РУ", name: "Русский" },
@@ -19,7 +20,7 @@ const LANGS: { code: Language; label: string; name: string }[] = [
 ];
 
 export function Header() {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage, t, lp } = useLanguage();
   const { openPurchase } = usePurchase();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
@@ -29,9 +30,9 @@ export function Header() {
 
   const navItems = NAV_ROUTES.map((r) => ({ path: r.path, label: t.nav[r.key] }));
 
+  const page = stripLang(location.pathname);
   const isActive = (path: string) =>
-    location.pathname === path ||
-    (path !== "/" && location.pathname.startsWith(path + "/"));
+    page === path || (path !== "/" && page.startsWith(path + "/"));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -53,7 +54,7 @@ export function Header() {
     <>
       <header className={`hdr eko ${scrolled ? "hdr--scrolled" : ""}`}>
         <div className="container hdr__inner">
-          <Link className="brand" to="/" aria-label="EKOGUMUS">
+          <Link className="brand" to={lp("/")} aria-label="EKOGUMUS">
             {/* size — размер логотипов в шапке, px */}
             <BrandLogo size={60} />
             <span className="brand__name">EKOGUMUS</span>
@@ -63,7 +64,7 @@ export function Header() {
             {navItems.map(({ path, label }) => (
               <Link
                 key={path}
-                to={path}
+                to={lp(path)}
                 className={`navlink ${isActive(path) ? "navlink--on" : ""}`}
                 aria-current={isActive(path) ? "page" : undefined}
               >
@@ -150,7 +151,7 @@ export function Header() {
             {navItems.map(({ path, label }) => (
               <Link
                 key={path}
-                to={path}
+                to={lp(path)}
                 className={isActive(path) ? "on" : ""}
                 aria-current={isActive(path) ? "page" : undefined}
               >

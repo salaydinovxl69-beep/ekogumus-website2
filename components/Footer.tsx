@@ -8,7 +8,7 @@ import { PHONE, PHONE_RAW, EMAIL, TELEGRAM_URL, YOUTUBE_URL, LINKEDIN_URL } from
 import { NAV_ROUTES } from "../utils/nav";
 
 export function Footer() {
-  const { t } = useLanguage();
+  const { t, lp } = useLanguage();
   const f = t.footer;
   const e = t.eko;
 
@@ -26,7 +26,7 @@ export function Footer() {
         <div className="ftr__grid">
           {/* Brand */}
           <div className="ftr__brand">
-            <Link className="brand" to="/" aria-label="EKOGUMUS">
+            <Link className="brand" to={lp("/")} aria-label="EKOGUMUS">
               {/* size — размер логотипов в футере, px */}
               <BrandLogo size={48} />
               <span className="brand__name">EKOGUMUS</span>
@@ -39,7 +39,7 @@ export function Footer() {
             <h4 className="ftr__h">{f.quickLinks}</h4>
             <nav className="ftr__links">
               {navItems.map((n) => (
-                <Link key={n.path} to={n.path}>
+                <Link key={n.path} to={lp(n.path)}>
                   {n.label}
                 </Link>
               ))}

@@ -20,7 +20,7 @@ const IMG_BY_KEYWORD: Record<string, string> = {
 const LOCALE: Record<Language, string> = { ru: "ru-RU", uz: "uz-UZ", en: "en-US" };
 
 export function NewsPage() {
-  const { t, language } = useLanguage();
+  const { t, language, lp } = useLanguage();
   const navigate = useNavigate();
   usePageMeta();
   const en = t.eko.news;
@@ -131,7 +131,7 @@ export function NewsPage() {
               className="btn btn--primary"
               onClick={() => {
                 setOpenId(null);
-                navigate("/contacts");
+                navigate(lp("/contacts"));
               }}
             >
               {en.contactUs} <Icon name="arrow" size={17} className="arrow" />

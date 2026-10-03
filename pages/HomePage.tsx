@@ -1,5 +1,5 @@
 /* «Земля и Зерно» — Home page. */
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { usePurchase } from "../contexts/PurchaseContext";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -21,9 +21,8 @@ const IMG = {
 const HERO_SIZES = "(min-width: 980px) 60vw, (min-width: 500px) 460px, 92vw";
 
 export function HomePage() {
-  const { t } = useLanguage();
+  const { t, lp } = useLanguage();
   const { openPurchase } = usePurchase();
-  const navigate = useNavigate();
   usePageMeta();
 
   const e = t.eko;
@@ -76,12 +75,12 @@ export function HomePage() {
               <p className="lead hero__sub">{H.subtitle}</p>
             </Reveal>
             <Reveal delay={3} className="hero__btns">
-              <button className="btn btn--primary btn--lg" onClick={() => navigate("/products")}>
+              <Link className="btn btn--primary btn--lg" to={lp("/products")}>
                 {e.viewProducts} <Icon name="arrow" size={18} className="arrow" />
-              </button>
-              <button className="btn btn--ghost btn--lg" onClick={() => navigate("/about")}>
+              </Link>
+              <Link className="btn btn--ghost btn--lg" to={lp("/about")}>
                 {t.nav.about}
-              </button>
+              </Link>
             </Reveal>
           </div>
 
@@ -171,9 +170,9 @@ export function HomePage() {
               ))}
             </Reveal>
             <Reveal delay={4}>
-              <button className="btn btn--ghost" onClick={() => navigate("/about")}>
+              <Link className="btn btn--ghost" to={lp("/about")}>
                 {e.moreAboutCompany} <Icon name="arrow" size={17} className="arrow" />
-              </button>
+              </Link>
             </Reveal>
           </div>
         </div>
@@ -206,9 +205,9 @@ export function HomePage() {
                   <button className="btn btn--primary" onClick={() => openPurchase({ name: "BIOGUMUS", type: "granule" })}>
                     <Icon name="cart" size={17} /> {e.buy}
                   </button>
-                  <button className="btn btn--light" onClick={() => navigate("/products")}>
+                  <Link className="btn btn--light" to={lp("/products")}>
                     {e.details}
-                  </button>
+                  </Link>
                 </div>
               </div>
             </Reveal>
@@ -230,9 +229,9 @@ export function HomePage() {
                   <button className="btn btn--clay" onClick={() => openPurchase({ name: "NANOECOVERM", type: "liquid" })}>
                     <Icon name="cart" size={17} /> {e.buy}
                   </button>
-                  <button className="btn btn--light" onClick={() => navigate("/products")}>
+                  <Link className="btn btn--light" to={lp("/products")}>
                     {e.details}
-                  </button>
+                  </Link>
                 </div>
               </div>
             </Reveal>

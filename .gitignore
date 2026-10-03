@@ -7,3 +7,5 @@ public/images/optimized
 4observe
 .git.broken-worktree-link.bak
 .claude/settings.local.json
+dist-ssr
+.wrangler

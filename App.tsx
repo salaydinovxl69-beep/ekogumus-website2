@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { PurchaseProvider } from "./contexts/PurchaseContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
@@ -9,6 +9,8 @@ import { StickyMobileCTA } from "./components/StickyMobileCTA";
 import { PageSkeleton } from "./components/PageSkeleton";
 import { Toaster } from "./components/ui/sonner";
 import { lazy, Suspense } from "react";
+import type { Language } from "./utils/i18n";
+import type { TranslationKeys } from "./utils/translations";
 // Главная — статически: убирает лишний RTT из цепочки до LCP на самом частом входе.
 import { HomePage } from "./pages/HomePage";
 
@@ -19,41 +21,51 @@ const CooperationPage = lazy(() => import("./pages/CooperationPage").then(m => (
 const ContactsPage = lazy(() => import("./pages/ContactsPage").then(m => ({ default: m.ContactsPage })));
 const NewsPage = lazy(() => import("./pages/NewsPage").then(m => ({ default: m.NewsPage })));
 
-export default function App() {
+/* Языковые префиксы адресов: "" — русский, /uz, /en */
+const PREFIXES = ["", "/uz", "/en"];
+
+interface AppProps {
+  /** Словари, загруженные до первого рендера (пререндер / гидратация) */
+  initialDicts?: Partial<Record<Language, TranslationKeys>>;
+}
+
+/* Router задаётся снаружи: BrowserRouter в браузере (main.tsx),
+   StaticRouter при пререндере (entry-server.tsx). */
+export default function App({ initialDicts }: AppProps) {
   return (
     <ErrorBoundary>
-      <LanguageProvider>
-        <Router>
-          <ScrollToTop />
-          <PurchaseProvider>
-            <div className="min-h-screen relative">
-              <Header />
-              <main className="relative z-10">
-                <Suspense fallback={<PageSkeleton />}>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/products" element={<ProductPage />} />
-                    <Route path="/cooperation" element={<CooperationPage />} />
-                    <Route path="/news" element={<NewsPage />} />
-                    <Route path="/contacts" element={<ContactsPage />} />
+      <LanguageProvider initialDicts={initialDicts}>
+        <ScrollToTop />
+        <PurchaseProvider>
+          <div className="min-h-screen relative">
+            <Header />
+            <main className="relative z-10">
+              <Suspense fallback={<PageSkeleton />}>
+                <Routes>
+                  {PREFIXES.map((pre) => [
+                    <Route key={pre + "/"} path={pre || "/"} element={<HomePage />} />,
+                    <Route key={pre + "/about"} path={`${pre}/about`} element={<AboutPage />} />,
+                    <Route key={pre + "/products"} path={`${pre}/products`} element={<ProductPage />} />,
+                    <Route key={pre + "/cooperation"} path={`${pre}/cooperation`} element={<CooperationPage />} />,
+                    <Route key={pre + "/news"} path={`${pre}/news`} element={<NewsPage />} />,
+                    <Route key={pre + "/contacts"} path={`${pre}/contacts`} element={<ContactsPage />} />,
+                  ])}
 
-                    <Route path="/preview_page.html" element={<Navigate to="/" replace />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                </Suspense>
-              </main>
-              <Footer />
-              <StickyMobileCTA />
-              <Toaster
-                position="bottom-right"
-                toastOptions={{ className: 'font-opensans' }}
-                theme="light"
-                richColors
-              />
-            </div>
-          </PurchaseProvider>
-        </Router>
+                  <Route path="/preview_page.html" element={<Navigate to="/" replace />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </Suspense>
+            </main>
+            <Footer />
+            <StickyMobileCTA />
+            <Toaster
+              position="bottom-right"
+              toastOptions={{ className: 'font-opensans' }}
+              theme="light"
+              richColors
+            />
+          </div>
+        </PurchaseProvider>
       </LanguageProvider>
     </ErrorBoundary>
   );

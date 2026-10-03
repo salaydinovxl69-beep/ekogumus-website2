@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Language, defaultLanguage } from '../utils/i18n';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Language } from '../utils/i18n';
 import type { TranslationKeys } from '../utils/translations';
+import { langFromPath, localePath, stripLang } from '../utils/routing';
 
-async function loadTranslation(lang: Language): Promise<TranslationKeys> {
+export async function loadTranslation(lang: Language): Promise<TranslationKeys> {
   switch (lang) {
     case 'uz':
       return (await import('../utils/translations/uz')).uz;
@@ -14,29 +16,23 @@ async function loadTranslation(lang: Language): Promise<TranslationKeys> {
   }
 }
 
-function detectInitialLanguage(): Language {
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const stored = localStorage.getItem('ekogumus-language');
-      if (stored && (stored === 'ru' || stored === 'uz' || stored === 'en')) {
-        return stored as Language;
-      }
-    }
-  } catch (error) {
-    console.warn('Failed to read from localStorage:', error);
-  }
-  return defaultLanguage;
-}
+const STORAGE_KEY = 'ekogumus-language';
 
-/* Старт загрузки словаря на module-scope — чанк перевода едет параллельно
-   инициализации React, а не после первого рендера провайдера.
-   import() кэширует модуль, поэтому повторный вызов в эффекте бесплатен. */
-const initialLanguage = detectInitialLanguage();
-void loadTranslation(initialLanguage).catch(() => {});
+function readStoredLanguage(): Language | null {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === 'ru' || stored === 'uz' || stored === 'en') return stored;
+  } catch {
+    // localStorage недоступен (приватный режим и т.п.)
+  }
+  return null;
+}
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
+  /** Адрес страницы на текущем языке: lp("/products") → /uz/products */
+  lp: (path: string) => string;
   t: TranslationKeys;
   isLoading: boolean;
 }
@@ -45,64 +41,93 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 interface LanguageProviderProps {
   children: React.ReactNode;
+  /** Словари, уже загруженные до первого рендера (пререндер и гидратация),
+      чтобы первая отрисовка совпала с HTML с сервера без спиннера. */
+  initialDicts?: Partial<Record<Language, TranslationKeys>>;
 }
 
-export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [language, setLanguageState] = useState<Language>(initialLanguage);
+/* Язык берётся из адреса (/uz/..., /en/..., без префикса — русский), поэтому
+   каждая языковая версия — отдельная индексируемая страница. Провайдер должен
+   стоять внутри Router. */
+export function LanguageProvider({ children, initialDicts = {} }: LanguageProviderProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const language = langFromPath(location.pathname);
 
-  const [t, setT] = useState<TranslationKeys | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const dicts = useRef<Partial<Record<Language, TranslationKeys>>>({ ...initialDicts });
+  const [t, setT] = useState<TranslationKeys | null>(dicts.current[language] ?? null);
+  const [loadedLang, setLoadedLang] = useState<Language | null>(dicts.current[language] ? language : null);
 
   useEffect(() => {
+    if (loadedLang === language) return;
     let cancelled = false;
-    setIsLoading(true);
+    const cached = dicts.current[language];
+    if (cached) {
+      setT(cached);
+      setLoadedLang(language);
+      return;
+    }
     loadTranslation(language)
-      .then((translations) => {
+      .then((dict) => {
+        dicts.current[language] = dict;
         if (!cancelled) {
-          setT(translations);
-          setIsLoading(false);
+          setT(dict);
+          setLoadedLang(language);
         }
       })
-      .then(() => {
-        /* Остальные словари — заранее, в простое браузера, чтобы переключение
-           языка было мгновенным (import() кэширует модуль) */
-        const others = (['ru', 'uz', 'en'] as Language[]).filter((l) => l !== language);
-        const prefetch = () => others.forEach((l) => void loadTranslation(l).catch(() => {}));
-        if ('requestIdleCallback' in window) window.requestIdleCallback(prefetch);
-        else setTimeout(prefetch, 1500);
-      })
-      .catch((error) => {
-        console.error('Failed to load translations:', error);
-        if (!cancelled) setIsLoading(false);
-      });
+      .catch((error) => console.error('Failed to load translations:', error));
     return () => {
       cancelled = true;
     };
-  }, [language]);
+  }, [language, loadedLang]);
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        localStorage.setItem('ekogumus-language', lang);
-      }
-    } catch (error) {
-      console.warn('Failed to save to localStorage:', error);
-    }
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = lang;
-    }
-  };
+  /* Остальные словари — заранее, в простое браузера, чтобы переключение
+     языка было мгновенным (import() кэширует модуль) */
+  useEffect(() => {
+    const prefetch = () =>
+      (['ru', 'uz', 'en'] as Language[]).forEach((l) => {
+        if (!dicts.current[l]) void loadTranslation(l).then((d) => (dicts.current[l] = d)).catch(() => {});
+      });
+    if ('requestIdleCallback' in window) window.requestIdleCallback(prefetch);
+    else setTimeout(prefetch, 1500);
+  }, []);
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.lang = language;
-    }
+    document.documentElement.lang = language;
   }, [language]);
 
-  /* Спиннер только при первой загрузке. При смене языка показываем прежний
-     словарь, пока грузится новый: иначе всё приложение размонтируется —
-     мигание, сброс прокрутки и состояния страниц, будто страница перезагрузилась */
+  /* Старые ссылки вида /?lang=uz и возврат на главную с ранее выбранным языком */
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const q = params.get('lang');
+    if (q === 'ru' || q === 'uz' || q === 'en') {
+      params.delete('lang');
+      const search = params.toString();
+      navigate(localePath(stripLang(location.pathname), q) + (search ? `?${search}` : '') + location.hash, { replace: true });
+      return;
+    }
+    const stored = readStoredLanguage();
+    if (location.pathname === '/' && stored && stored !== 'ru') {
+      navigate(localePath('/', stored), { replace: true });
+    }
+    // только при первом открытии сайта
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, lang);
+    } catch {
+      // localStorage недоступен
+    }
+    if (lang === language) return;
+    navigate(localePath(stripLang(location.pathname), lang) + location.search + location.hash);
+  };
+
+  const lp = (path: string) => localePath(path, language);
+
+  /* Спиннер только если словаря ещё нет совсем. При смене языка показываем
+     прежний словарь, пока грузится новый: без размонтирования приложения. */
   if (!t) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -112,7 +137,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   }
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, isLoading }}>
+    <LanguageContext.Provider value={{ language, setLanguage, lp, t, isLoading: loadedLang !== language }}>
       {children}
     </LanguageContext.Provider>
   );

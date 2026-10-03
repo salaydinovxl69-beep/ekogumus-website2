@@ -1,6 +1,6 @@
 /* «Земля и Зерно» — About / Company page. */
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { Icon } from "../components/eko/Icon";
@@ -185,8 +185,7 @@ function CertCarousel() {
 }
 
 export function AboutPage() {
-  const { t } = useLanguage();
-  const navigate = useNavigate();
+  const { t, lp } = useLanguage();
   usePageMeta();
 
   const a = t.about;
@@ -339,9 +338,9 @@ export function AboutPage() {
               ))}
             </div>
             <Reveal delay={2} style={{ marginTop: 30 }}>
-              <button className="btn btn--primary" onClick={() => navigate("/cooperation")}>
+              <Link className="btn btn--primary" to={lp("/cooperation")}>
                 {t.eko.becomePartner} <Icon name="arrow" size={17} className="arrow" />
-              </button>
+              </Link>
             </Reveal>
           </div>
         </div>

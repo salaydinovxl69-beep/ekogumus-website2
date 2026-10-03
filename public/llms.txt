@@ -6,6 +6,8 @@ EKOGUMUS is an Uzbekistan-based (Fergana) manufacturer of organic-mineral fertil
 
 ## Разделы сайта
 
+Узбекская версия — с префиксом /uz (например, https://ecogumus.com/uz/products), английская — /en (https://ecogumus.com/en/products).
+
 - [Главная](https://ecogumus.com/): о компании и продукции в кратком виде
 - [Продукция](https://ecogumus.com/products): BIOGUMUS и NANOECOVERM — фасовки, цены, состав, применение, презентации
 - [Компания](https://ecogumus.com/about): история, производство, сертификаты

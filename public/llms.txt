@@ -1,0 +1,32 @@
+# EKOGUMUS
+
+> EKOGUMUS — производитель органоминеральных удобрений на основе биогумуса (вермикомпоста) калифорнийских червей, Фергана, Узбекистан. Два продукта: BIOGUMUS (мелкогранулированное удобрение) и NANOECOVERM (жидкий концентрат). Сайт на трёх языках: русский, узбекский, английский.
+
+EKOGUMUS is an Uzbekistan-based (Fergana) manufacturer of organic-mineral fertilizers made from vermicompost: BIOGUMUS granules and NANOECOVERM liquid concentrate. Prices on the site are for buyers in Uzbekistan, in UZS; export prices are negotiated separately.
+
+## Разделы сайта
+
+- [Главная](https://ecogumus.com/): о компании и продукции в кратком виде
+- [Продукция](https://ecogumus.com/products): BIOGUMUS и NANOECOVERM — фасовки, цены, состав, применение, презентации
+- [Компания](https://ecogumus.com/about): история, производство, сертификаты
+- [Сотрудничество](https://ecogumus.com/cooperation): условия для оптовых покупателей, дилеров и экспорта, заявка на партнёрство
+- [Новости](https://ecogumus.com/news): события компании
+- [Контакты](https://ecogumus.com/contacts): телефоны, Telegram, email, адрес и карта
+
+## Продукция
+
+- BIOGUMUS — мелкогранулированное органоминеральное удобрение. Фасовка: 1; 1,5; 2; 2,5; 3; 7; 10; 20 кг. Цена от 6 500 до 93 000 сум.
+- NANOECOVERM — жидкое концентрированное органическое удобрение. Фасовка: 1, 5, 10 л. Цена от 30 000 до 300 000 сум.
+- Цены указаны для покупателей в Узбекистане. Экспортные цены обсуждаются отдельно.
+
+## Контакты
+
+- Телефон: +998 (93) 641-85-45, +998 (90) 634-45-75
+- Telegram: https://t.me/BahodirBX
+- Email: bashfergana@mail.ru
+- YouTube: https://www.youtube.com/@biogumusfargonaekogumus8419
+- Адрес: Узбекистан, г. Фергана, ул. Бабура, 37
+
+## Optional
+
+- [Карта сайта](https://ecogumus.com/sitemap.xml)

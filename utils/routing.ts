@@ -26,7 +26,10 @@ export function stripLang(pathname: string): string {
 
 /** Адрес страницы на нужном языке: ("/products", "uz") → /uz/products. */
 export function localePath(path: string, lang: Language): string {
-  const clean = path.startsWith("/") ? path : "/" + path;
+  // Обратные и повторные слэши в начале («/\\evil.com», «//evil.com») браузер
+  // может понять как адрес другого сайта — сводим к одному «/» (защита от
+  // открытого редиректа: путь берётся в том числе из адресной строки)
+  const clean = "/" + path.replace(/\\/g, "/").replace(/^\/+/, "");
   if (lang === "ru") return clean;
   return clean === "/" ? `/${lang}` : `/${lang}${clean}`;
 }

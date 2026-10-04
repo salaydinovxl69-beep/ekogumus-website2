@@ -586,9 +586,9 @@ export function ProductPage() {
               </div>
               <div className="prodinfo__cards">
                 <div className="prodinfo__card">
-                  <h4 className="prodinfo__cardh">
+                  <h3 className="prodinfo__cardh">
                     <Icon name="soil" size={18} /> {P.biohumusInfo.characteristicsTitle}
-                  </h4>
+                  </h3>
                   <dl className="speclist">
                     {charRows.map(([k, v], i) => (
                       <div className="speclist__row" key={i}>
@@ -599,9 +599,9 @@ export function ProductPage() {
                   </dl>
                 </div>
                 <div className="prodinfo__card prodinfo__card--adv">
-                  <h4 className="prodinfo__cardh">
+                  <h3 className="prodinfo__cardh">
                     <Icon name="leaf" size={18} /> {P.biohumusInfo.advantagesTitle}
-                  </h4>
+                  </h3>
                   <ul className="advlist">
                     {advantages.map((a, i) => (
                       <li key={i}>
@@ -627,16 +627,16 @@ export function ProductPage() {
                   <div className="proc__step" key={i}>
                     <span className="proc__n mono">{s.n}</span>
                     <div>
-                      <h4>{s.t}</h4>
+                      <h3>{s.t}</h3>
                       <p>{s.d}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="proc__adv">
-                <h4 className="prodinfo__cardh">
+                <h3 className="prodinfo__cardh">
                   <Icon name="spark" size={18} /> {P.productionProcess.advantagesTitle}
-                </h4>
+                </h3>
                 <p>{P.productionProcess.advantagesDescription}</p>
               </div>
             </div>
@@ -655,7 +655,7 @@ export function ProductPage() {
                 <span className="usage__ic">
                   <Icon name={usageIcons[i]} size={26} />
                 </span>
-                <h4>{s.t}</h4>
+                <h3>{s.t}</h3>
                 <p>{s.d}</p>
               </Reveal>
             ))}

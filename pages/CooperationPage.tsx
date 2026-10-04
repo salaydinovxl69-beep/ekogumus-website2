@@ -129,7 +129,7 @@ export function CooperationPage() {
             {process.map((p, i) => (
               <Reveal key={i} delay={(i % 4) as 0 | 1 | 2 | 3} className="pstep">
                 <span className="pstep__n mono">{String(i + 1).padStart(2, "0")}</span>
-                <h4>{p.title}</h4>
+                <h3>{p.title}</h3>
                 <p>{p.description}</p>
               </Reveal>
             ))}
@@ -148,7 +148,7 @@ export function CooperationPage() {
                   <Icon name={a.icon} size={22} />
                 </span>
                 <div>
-                  <h4>{a.title}</h4>
+                  <h3>{a.title}</h3>
                   <p>{a.description}</p>
                 </div>
               </Reveal>

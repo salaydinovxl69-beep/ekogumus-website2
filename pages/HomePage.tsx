@@ -255,12 +255,12 @@ export function HomePage() {
                 <span className="benefit__ic">
                   <Icon name={b.icon} size={26} />
                 </span>
-                <h4>{b.title}</h4>
+                <h3>{b.title}</h3>
                 <p>{b.description}</p>
               </Reveal>
             ))}
             <Reveal delay={2} className="benefit benefit--cta">
-              <h4>{e.home.readyTitle}</h4>
+              <h3>{e.home.readyTitle}</h3>
               <p>{e.home.readySub}</p>
               <button className="btn btn--primary btn--sm" onClick={() => openPurchase()}>
                 {e.buy} <Icon name="arrow" size={16} className="arrow" />

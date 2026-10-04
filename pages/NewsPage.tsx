@@ -97,7 +97,7 @@ export function NewsPage() {
                 </div>
                 <div className="newscard__body">
                   <span className="newscard__date mono">{fmtDate(n.date)}</span>
-                  <h3>{n.title}</h3>
+                  <h2>{n.title}</h2>
                   <p>{n.excerpt}</p>
                   <span className="newscard__more">
                     {t.news.readMore} <Icon name="arrow" size={16} className="arrow" />

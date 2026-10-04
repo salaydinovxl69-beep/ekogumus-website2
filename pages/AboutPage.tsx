@@ -146,6 +146,9 @@ function CertCarousel() {
         <div
           className="certs__track"
           ref={trackRef}
+          tabIndex={0}
+          role="region"
+          aria-label={t.aboutPage.certificates.title}
           onScroll={onScroll}
           onMouseEnter={pause}
           onMouseLeave={resume}
@@ -276,7 +279,7 @@ export function AboutPage() {
                 <span className="tnode__dot">
                   <Icon name={s.icon} size={18} />
                 </span>
-                <h4>{s.title}</h4>
+                <h3>{s.title}</h3>
                 <p>{s.description}</p>
               </Reveal>
             ))}
@@ -298,7 +301,7 @@ export function AboutPage() {
                 <span className="val__ic">
                   <Icon name={v.icon} size={26} />
                 </span>
-                <h4>{v.title}</h4>
+                <h3>{v.title}</h3>
                 <p>{v.description}</p>
               </Reveal>
             ))}

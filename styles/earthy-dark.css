@@ -24,14 +24,16 @@
   /* Ink → warm light on dark */
   --ink:          #E9E0CC;
   --ink-soft:     #B2AA94;
-  --ink-faint:    #8C8470;
+  --ink-faint:    #999280;   /* ≥4.5:1 на тёмных поверхностях */
 
   /* Green scale — brightened so it reads on dark surfaces.
      NOTE: --green-900 now serves as the light heading/ink-strong
      colour; every place that used it as a DARK BAND BACKGROUND is
      re-pointed to a deep surface further down. */
   --green-900:    #ECE5D1;
-  --green-800:    #3C8852;   /* primary / icon tiles / pills */
+  /* primary / icon tiles / pills — фон под светлым текстом (≥4.5:1).
+     Там, где green-800 — цвет ТЕКСТА на тёмном, ниже он заменён на green-700. */
+  --green-800:    #295E39;
   --green-700:    #61A26B;
   --green-600:    #62A36C;
   --green-500:    #58976A;
@@ -39,7 +41,7 @@
      foreground icons on green tiles + glow accents) */
 
   /* Soil + grain accents — a touch brighter to glow on dark */
-  --clay:         #D17046;
+  --clay:         #D17046;   /* текстом на тёмном ≥4.5:1; фон кнопок — см. ниже */
   --clay-soft:    #DC8C61;
   --ochre:        #D8A847;
   --ochre-soft:   #E6CD84;
@@ -131,8 +133,8 @@
 :root[data-theme="dark"] .btn--primary:hover { background: #49A062; }
 
 /* «Купить» в карточке-CTA (блок преимуществ) — оранжевая в тёмной теме */
-:root[data-theme="dark"] .benefit--cta .btn--primary { background: #D17046; }
-:root[data-theme="dark"] .benefit--cta .btn--primary:hover { background: #DD8155; }
+:root[data-theme="dark"] .benefit--cta .btn--primary { background: #9F5535; } /* светлый текст ≥4.5:1 */
+:root[data-theme="dark"] .benefit--cta .btn--primary:hover { background: #8A4A2E; }
 
 /* Certificate seal: ochre disc, label was --green-900 (now light) */
 :root[data-theme="dark"] .cert__seal { color: #1A1F12; border-color: var(--bg); }
@@ -146,3 +148,30 @@
 :root[data-theme="dark"] .drawer__theme { background: #FFFFFF; border-color: #FFFFFF; color: #1E3D2A; }
 :root[data-theme="dark"] .drawer__theme:hover { background: #F3ECDD; border-color: #F3ECDD; }
 :root[data-theme="dark"] .drawer__theme svg { color: #D17046; }
+
+/* ============================================================
+   Контраст (WCAG AA). green-800 в тёмной теме — тёмный фон кнопок и плашек;
+   там, где он был цветом текста/иконок на тёмном фоне, берём светлый green-700.
+   ============================================================ */
+:root[data-theme="dark"] .eko .btn--ghost,
+:root[data-theme="dark"] .navlink:hover,
+:root[data-theme="dark"] .hdr__icon,
+:root[data-theme="dark"] .langsw__btn:hover,
+:root[data-theme="dark"] .hero__stat-v,
+:root[data-theme="dark"] .mcta__btn--ghost,
+:root[data-theme="dark"] .certs__arrow,
+:root[data-theme="dark"] .ccard__btn--ghost,
+:root[data-theme="dark"] .hours__row strong,
+:root[data-theme="dark"] .presmodal__nav { color: var(--green-700); }
+:root[data-theme="dark"] .eko .btn--ghost { border-color: var(--green-700); }
+
+/* Светлые плашки-чипы остаются светлыми — текст на них тёмно-зелёный */
+:root[data-theme="dark"] .chip:not(.chip--clay):not(.chip--ochre) { color: #3F6946; }
+
+/* Кнопки и плашки цвета clay: светлый текст на более тёмном clay */
+:root[data-theme="dark"] .eko .btn--clay { background: #9F5535; }
+:root[data-theme="dark"] .eko .btn--clay:hover { background: #8A4A2E; }
+:root[data-theme="dark"] .ptab--liquid.ptab--on { background: #9F5535; border-color: #9F5535; }
+:root[data-theme="dark"] .pcard--liquid .pcard__weight { background: #9F5535; }
+:root[data-theme="dark"] .about-prev__since { background: #9F5535; }
+:root[data-theme="dark"] .benefit--cta p { color: var(--green-100); }

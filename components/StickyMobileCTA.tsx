@@ -6,7 +6,8 @@ export function StickyMobileCTA() {
   const { t } = useLanguage();
 
   return (
-    <div
+    <aside
+      aria-label={t.footer.contact}
       className="fixed right-6 z-50 flex flex-col gap-4 md:hidden"
       style={{ bottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))" }}
     >
@@ -26,6 +27,6 @@ export function StickyMobileCTA() {
       >
         <Icon name="phone" size={26} />
       </a>
-    </div>
+    </aside>
   );
 }

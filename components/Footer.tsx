@@ -36,8 +36,8 @@ export function Footer() {
 
           {/* Quick links */}
           <div className="ftr__col">
-            <h4 className="ftr__h">{f.quickLinks}</h4>
-            <nav className="ftr__links">
+            <h2 className="ftr__h">{f.quickLinks}</h2>
+            <nav className="ftr__links" aria-label={f.quickLinks}>
               {navItems.map((n) => (
                 <Link key={n.path} to={lp(n.path)}>
                   {n.label}
@@ -48,7 +48,7 @@ export function Footer() {
 
           {/* Contact info */}
           <div className="ftr__col">
-            <h4 className="ftr__h">{f.contact}</h4>
+            <h2 className="ftr__h">{f.contact}</h2>
             <div className="ftr__contact">
               <span className="ftr__row">
                 <Icon name="pin" size={17} />
@@ -71,7 +71,7 @@ export function Footer() {
 
           {/* Follow + hours */}
           <div className="ftr__col">
-            <h4 className="ftr__h">{f.follow}</h4>
+            <h2 className="ftr__h">{f.follow}</h2>
             <div className="ftr__social">
               <a href={YOUTUBE_URL} target="_blank" rel="noopener noreferrer" aria-label={t.a11y.youtube}>
                 <Icon name="youtube" size={18} />
@@ -87,7 +87,7 @@ export function Footer() {
               </a>
             </div>
             <div className="ftr__hours-card">
-              <h5 className="mono">{f.workingHours.title}</h5>
+              <h3 className="mono">{f.workingHours.title}</h3>
               {hours.map((h, i) => (
                 <div className="ftr__hrow" key={i}>
                   <span>{h.d}</span>

@@ -123,9 +123,12 @@ export function Header() {
       </header>
 
       {/* Mobile drawer — вне header, чтобы backdrop-filter не создавал containing block */}
+      {/* Закрытое меню — inert: его ссылки не попадают в Tab-навигацию
+          и не читаются экранным диктором, пока оно спрятано за экраном */}
       <div
         className={`drawer eko ${open ? "drawer--open" : ""}`}
         onClick={() => setOpen(false)}
+        {...(open ? {} : { inert: "", "aria-hidden": true })}
       >
         <div
           className="drawer__panel"

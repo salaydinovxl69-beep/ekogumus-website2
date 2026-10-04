@@ -105,7 +105,7 @@ export function ContactsPage() {
                 <span className="ccard__ic">
                   <Icon name={card.icon} size={24} />
                 </span>
-                <h4>{card.title}</h4>
+                <h2>{card.title}</h2>
                 {card.lines.map((l, j) => (
                   <span key={j} className={j === 0 ? "ccard__main" : "ccard__sub"}>
                     {l}
@@ -153,10 +153,10 @@ export function ContactsPage() {
             </a>
           </Reveal>
           <Reveal delay={1} className="map-sec__side">
-            <h3>{ec.findUs}</h3>
+            <h2>{ec.findUs}</h2>
             <p className="muted">{ec.findUsText}</p>
             <div className="hours">
-              <h4 className="mono">{t.footer.workingHours.title}</h4>
+              <h3 className="mono">{t.footer.workingHours.title}</h3>
               {hours.map((h, i) => (
                 <div className="hours__row" key={i}>
                   <span>{h.d}</span>

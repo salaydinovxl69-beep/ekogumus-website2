@@ -1,5 +1,6 @@
 import sharp from 'sharp';
-import { mkdir, stat, readFile } from 'fs/promises';
+import { mkdir, readFile, writeFile } from 'fs/promises';
+import { createHash } from 'crypto';
 import { existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -31,14 +32,29 @@ async function ensureDir(dir) {
   if (!existsSync(dir)) await mkdir(dir, { recursive: true });
 }
 
-// Кэш по mtime: пересоздаём файл, только если оригинал новее результата.
-async function isFresh(outFile, srcMtimeMs) {
-  try {
-    const s = await stat(outFile);
-    return s.mtimeMs >= srcMtimeMs;
-  } catch {
-    return false;
+/* Кэш по содержимому: готовые файлы лежат в репозитории (public/images/optimized),
+   а scripts/image-cache.json хранит для каждого отпечаток исходника и параметров.
+   Файл пересоздаётся, только если изменился исходник или настройки сжатия, —
+   поэтому сборка на Cloudflare не пережимает 150+ картинок каждый раз.
+   (mtime для этого не годится: после git clone у всех файлов дата клонирования.) */
+const cachePath = path.join(root, 'scripts', 'image-cache.json');
+const cache = existsSync(cachePath) ? JSON.parse(await readFile(cachePath, 'utf8')) : {};
+const nextCache = {};
+const srcHashes = new Map();
+
+async function srcHash(input) {
+  if (!srcHashes.has(input)) {
+    srcHashes.set(input, createHash('sha1').update(await readFile(input)).digest('hex'));
   }
+  return srcHashes.get(input);
+}
+
+/** true — файл актуален и пересоздавать не нужно. */
+async function isFresh(outFile, input, params) {
+  const key = path.relative(optimizedOut, outFile).split(path.sep).join('/');
+  const sig = createHash('sha1').update((await srcHash(input)) + JSON.stringify(params)).digest('hex');
+  nextCache[key] = sig;
+  return cache[key] === sig && existsSync(outFile);
 }
 
 async function generateContentImages() {
@@ -50,12 +66,11 @@ async function generateContentImages() {
       console.warn('Source not found, skipping:', def.src);
       continue;
     }
-    const srcMtime = (await stat(input)).mtimeMs;
     const formats = def.formats ?? ['avif', 'webp'];
     for (const width of def.widths) {
       for (const fmt of formats) {
         const outFile = path.join(optimizedOut, `${base}-${width}.${fmt}`);
-        if (await isFresh(outFile, srcMtime)) continue;
+        if (await isFresh(outFile, input, { width, fmt, q: QUALITY[fmt] })) continue;
         const pipeline = sharp(input).resize({ width, withoutEnlargement: true });
         if (fmt === 'webp') pipeline.webp({ quality: QUALITY.webp });
         else pipeline.avif({ quality: QUALITY.avif });
@@ -82,9 +97,8 @@ async function generatePresentationSlides() {
   for (let n = 1; ; n++) {
     const input = path.join(slidesIn, `slide_${n}.png`);
     if (!existsSync(input)) break;
-    const srcMtime = (await stat(input)).mtimeMs;
     const outFile = path.join(slidesOut, `slide_${n}.webp`);
-    if (await isFresh(outFile, srcMtime)) continue;
+    if (await isFresh(outFile, input, { width: 1280, q: QUALITY.webp })) continue;
     await sharp(input)
       .resize({ width: 1280, withoutEnlargement: true })
       .webp({ quality: QUALITY.webp })
@@ -104,10 +118,9 @@ async function generateLogos() {
       console.warn('Logo source not found, skipping:', input);
       continue;
     }
-    const srcMtime = (await stat(input)).mtimeMs;
     for (const width of logoWidths) {
       const outFile = path.join(optimizedOut, `${out}-${width}.webp`);
-      if (await isFresh(outFile, srcMtime)) continue;
+      if (await isFresh(outFile, input, { width, q: 90, logo: true })) continue;
       await sharp(input)
         .resize(width, width, { fit: 'inside', withoutEnlargement: true })
         .webp({ quality: 90 })
@@ -119,9 +132,27 @@ async function generateLogos() {
   return made;
 }
 
+/* Картинка для превью ссылок (og:image / twitter:image): 1200×630 JPEG —
+   стандартный размер для Telegram, WhatsApp, Facebook; JPEG понимают все. */
+async function generateOgImage() {
+  await ensureDir(optimizedOut);
+  const input = path.join(originalsDir, 'Products.png');
+  const outFile = path.join(optimizedOut, 'og-image.jpg');
+  if (await isFresh(outFile, input, { og: '1200x630', q: 84 })) return 0;
+  await sharp(input)
+    .resize(1200, 630, { fit: 'cover', position: 'centre' })
+    .flatten({ background: '#F3ECDD' })
+    .jpeg({ quality: 84, mozjpeg: true })
+    .toFile(outFile);
+  console.log('og-image.jpg');
+  return 1;
+}
+
 const counts = [];
+counts.push(await generateOgImage());
 counts.push(await generateLogos());
 counts.push(await generateContentImages());
 counts.push(await generatePresentationSlides());
 const total = counts.reduce((a, b) => a + b, 0);
+await writeFile(cachePath, JSON.stringify(nextCache, null, 2) + '\n');
 console.log(total ? `Image optimization complete: ${total} file(s) generated.` : 'Image optimization: everything up to date.');

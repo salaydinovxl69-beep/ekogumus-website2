@@ -2,7 +2,6 @@
 node_modules
 dist
 .DS_Store
-public/images/optimized
 .vscode
 4observe
 .git.broken-worktree-link.bak

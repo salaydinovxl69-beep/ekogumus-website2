@@ -7,6 +7,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { createHash } from "node:crypto";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const dist = path.join(root, "dist");
@@ -65,6 +66,15 @@ ${urls.join("\n")}
 </urlset>
 `
 );
+
+/* CSP: sha256 встроенного скрипта темы (index.html) — в dist/_headers */
+const headersFile = path.join(dist, "_headers");
+const inline = [...template.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+if (inline.length !== 1) throw new Error(`prerender: ожидался 1 встроенный <script> в index.html, найдено ${inline.length} — обновите CSP в public/_headers`);
+const themeHash = "sha256-" + createHash("sha256").update(inline[0]).digest("base64");
+const headers = fs.readFileSync(headersFile, "utf8");
+if (!headers.includes("__THEME_SCRIPT_HASH__")) throw new Error("prerender: в _headers нет __THEME_SCRIPT_HASH__");
+fs.writeFileSync(headersFile, headers.replace("__THEME_SCRIPT_HASH__", themeHash));
 
 fs.rmSync(ssrDir, { recursive: true, force: true });
 console.log(`Prerendered ${count} pages, sitemap with ${urls.length} URLs.`);

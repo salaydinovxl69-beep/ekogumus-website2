@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { useScrollLock } from "../hooks/useScrollLock";
-import { Language } from "../utils/i18n";
 import { Icon } from "../components/eko/Icon";
 import { Reveal, useFocusTrap } from "../components/eko/Reveal";
 import { Eyebrow, Slot } from "../components/eko/primitives";
+import { formatDate } from "../utils/formatDate";
 import { optimizedSources } from "../utils/img";
 
 const IMG_BY_KEYWORD: Record<string, string> = {
@@ -16,8 +16,6 @@ const IMG_BY_KEYWORD: Record<string, string> = {
   "certificate quality standards": "/images/originals/news_card_img_2.jpg",
   "cotton field fertilizer": "/images/originals/news_card_img_3.png",
 };
-
-const LOCALE: Record<Language, string> = { ru: "ru-RU", uz: "uz-UZ", en: "en-US" };
 
 export function NewsPage() {
   const { t, language, lp } = useLanguage();
@@ -37,8 +35,7 @@ export function NewsPage() {
   useFocusTrap(cardRef, openId != null, () => setOpenId(null));
   useScrollLock(openId != null);
 
-  const fmtDate = (d: string) =>
-    new Date(d).toLocaleDateString(LOCALE[language], { day: "numeric", month: "long", year: "numeric" });
+  const fmtDate = (d: string) => formatDate(d, language);
 
   return (
     <div className="page eko">

@@ -89,6 +89,7 @@ export function NewsPage() {
                     radius={0}
                     sources={optimizedSources(IMG_BY_KEYWORD[n.image])}
                     sizes="(min-width: 900px) 360px, 92vw"
+                    priority={i === 0}
                   />
                   <span className="newscard__cat chip">
                     {t.news.categories[n.category as keyof typeof t.news.categories]}

@@ -3,6 +3,7 @@
    didn't fire in its sandbox; in the real app IO is cleaner and is used here. */
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ElementType,
@@ -18,40 +19,59 @@ interface RevealProps {
   style?: React.CSSProperties;
 }
 
+/* Первая загрузка страницы: всё, что уже видно на экране, показываем сразу,
+   без анимации — пререндеренный HTML виден до загрузки JS, и браузер (и
+   Lighthouse) не ждёт скрипт, чтобы отрисовать первый экран (LCP).
+   Анимируем только то, что ниже экрана, и всё — при переходах внутри сайта. */
+let initialLoadDone = false;
+if (typeof window !== "undefined") {
+  const markDone = () => setTimeout(() => (initialLoadDone = true), 0);
+  if (document.readyState === "complete") markDone();
+  else window.addEventListener("load", markDone, { once: true });
+}
+
+const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
+
+/** Ниже видимой части экрана — значит, можно спрятать и проявить при прокрутке. */
+function shouldAnimate(el: HTMLElement) {
+  if (initialLoadDone) return true;
+  return el.getBoundingClientRect().top > window.innerHeight;
+}
+
+function onVisible(el: HTMLElement, cb: () => void, options: IntersectionObserverInit) {
+  if (typeof IntersectionObserver === "undefined") {
+    cb();
+    return () => {};
+  }
+  const io = new IntersectionObserver((entries) => {
+    if (entries.some((e) => e.isIntersecting)) {
+      cb();
+      io.disconnect();
+    }
+  }, options);
+  io.observe(el);
+  return () => io.disconnect();
+}
+
 export function Reveal({ children, delay = 0, as, className = "", ...rest }: RevealProps) {
   const Tag = (as || "div") as ElementType;
   const ref = useRef<HTMLElement | null>(null);
-  const [shown, setShown] = useState(false);
+  // static — видно сразу (так и в пререндеренном HTML); pending — спрятано до прокрутки
+  const [state, setState] = useState<"static" | "pending" | "in">("static");
 
-  useEffect(() => {
+  useIsoLayoutEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setShown(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setShown(true);
-            io.disconnect();
-          }
-        });
-      },
-      { rootMargin: "0px 0px -60px 0px", threshold: 0.01 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    if (!el || !shouldAnimate(el)) return;
+    setState("pending");
+    return onVisible(el, () => requestAnimationFrame(() => setState("in")), {
+      rootMargin: "0px 0px -60px 0px",
+      threshold: 0.01,
+    });
   }, []);
 
+  const cls = state === "static" ? "reveal" : state === "pending" ? "reveal reveal--pending" : "reveal reveal--pending in";
   return (
-    <Tag
-      ref={ref}
-      className={`reveal ${shown ? "in" : ""} ${className}`.trim()}
-      data-d={delay || undefined}
-      {...rest}
-    >
+    <Tag ref={ref} className={`${cls} ${className}`.trim()} data-d={delay || undefined} {...rest}>
       {children}
     </Tag>
   );
@@ -65,42 +85,33 @@ interface CounterProps {
 }
 
 export function Counter({ end, duration = 1600, suffix = "", className = "" }: CounterProps) {
-  const [val, setVal] = useState(0);
+  // Итоговое число — сразу (в HTML для поисковиков и первого экрана), счёт с нуля —
+  // только для счётчиков ниже экрана или при переходе внутри сайта
+  const [val, setVal] = useState(end);
   const ref = useRef<HTMLSpanElement | null>(null);
-  const done = useRef(false);
 
-  useEffect(() => {
+  useIsoLayoutEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    const run = () => {
-      if (done.current) return;
-      done.current = true;
-      const t0 = performance.now();
-      const tick = (now: number) => {
-        const p = Math.min((now - t0) / duration, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        setVal(Math.floor(eased * end));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-    if (typeof IntersectionObserver === "undefined") {
-      run();
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            run();
-            io.disconnect();
-          }
-        });
+    if (!el || !shouldAnimate(el)) return;
+    setVal(0);
+    let raf = 0;
+    const stop = onVisible(
+      el,
+      () => {
+        const t0 = performance.now();
+        const tick = (now: number) => {
+          const p = Math.min((now - t0) / duration, 1);
+          setVal(Math.floor((1 - Math.pow(1 - p, 3)) * end));
+          if (p < 1) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
       },
       { threshold: 0.2 }
     );
-    io.observe(el);
-    return () => io.disconnect();
+    return () => {
+      stop();
+      cancelAnimationFrame(raf);
+    };
   }, [end, duration]);
 
   return (
